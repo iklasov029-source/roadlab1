@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zerde Road Lab</title>
+<style>
+:root{
+  --blue:#0f6cc4; --teal:#12b5c8; --ink:#13324b; --muted:#4a6275;
+  --bg:#fbfdff; --line:#d9ecf3; --yellow:#fbbf24; --orange:#f97316; --dark:#3a4452;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#fffdf8,#f1fbff);color:var(--ink);height:100vh;display:flex;overflow:hidden}
+button{font-family:inherit;cursor:pointer;border:0}
+/* sidebar */
+aside{width:330px;flex:none;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column}
+.brand{margin:22px 24px 0;padding:18px 22px;border-radius:22px;background:linear-gradient(90deg,var(--blue),var(--teal));color:#fff;font-weight:800;font-size:17px;letter-spacing:.3px}
+.sys{margin:14px 29px 14px;color:#0a8a99;font-weight:800;font-size:17px;letter-spacing:.3px}
+nav{overflow-y:auto;flex:1;padding:12px 14px 12px 18px;border-top:1px solid var(--line)}
+nav a{display:block;padding:14px 16px;margin-bottom:2px;border-radius:12px;font-size:14px;font-weight:600;color:var(--ink);text-decoration:none;cursor:pointer}
+nav a b{color:var(--blue);margin-right:6px}
+nav a:hover{background:#eef8fc}
+nav a.active{background:#d9f5fb;border-left:4px solid var(--yellow)}
+/* main */
+main{flex:1;display:flex;flex-direction:column;min-width:0}
+header{display:flex;justify-content:space-between;align-items:flex-start;padding:14px 40px 12px;border-bottom:1px solid var(--line);background:#fffffff0}
+header .t1{color:var(--blue);font-family:Georgia,serif;font-size:19px}
+header .t2{font-weight:700;font-size:15px;margin-top:6px}
+header .r{font-family:Georgia,serif;font-weight:700;color:#3b4a58;margin-top:10px;letter-spacing:.5px}
+.scroll{flex:1;overflow-y:auto;padding:30px 130px 110px}
+.eyebrow{color:#0a8a99;font-weight:800;font-size:13px;letter-spacing:2px}
+.title{font-family:Georgia,serif;font-size:21px;margin-top:6px}
+.sub{font-size:20px;color:var(--muted);margin-top:2px}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:28px}
+.card{border:2px solid #7fdbe8;border-radius:28px;padding:34px 32px;background:linear-gradient(135deg,#eaf9fd,#fffaf0)}
+.chip{display:inline-block;background:#d3f3f6;color:#0a7a88;font-weight:800;font-size:13px;padding:10px 14px;border-radius:20px}
+.card p{margin:22px 0 14px;font-size:18px}
+.lane{background:var(--dark);color:#fff;border-radius:18px;height:62px;margin-bottom:10px;display:flex;align-items:center;padding:0 22px;gap:10px;font-weight:800;font-size:18px;position:relative;overflow:hidden}
+.lane .dash{flex:1;border-top:3px dashed #ffffff55;margin:0 14px}
+.lane .car{font-size:20px}
+.lane.go .car{animation:drive 1.4s ease-in-out}
+@keyframes drive{from{transform:translateX(-320px)}to{transform:none}}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.btn{padding:16px 22px;border-radius:14px;font-weight:800;font-size:17px;letter-spacing:.3px}
+.b1{background:linear-gradient(90deg,var(--blue),var(--teal));color:#fff}
+.b2{background:linear-gradient(90deg,#fbbf24,var(--orange));color:#3a2200}
+.b3{background:#fff;border:1.5px solid var(--line);color:var(--blue)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 14px #0002}
+.hero{grid-template-columns:1fr!important}
+.hero .hero-img{order:-1}
+.hero-img{display:block;width:100%;height:auto;align-self:start;border-radius:20px;box-shadow:0 8px 24px #0f6cc422}
+.art h2{position:absolute;top:18px;right:20px;left:150px;text-align:center;color:#fff;font-size:38px;line-height:1;font-weight:900;-webkit-text-stroke:2px #1a7a3c;paint-order:stroke fill;text-shadow:0 3px 0 #1a7a3c}
+.art h2 span{display:block;background:#2d7fd6;border-radius:12px;font-size:12px;margin-top:8px;-webkit-text-stroke:0;padding:3px 6px;text-shadow:none}
+.girl{position:absolute;left:30px;top:50px;font-size:110px}
+.mats{position:absolute;left:20px;right:20px;bottom:20px;display:flex;gap:10px}
+.mats div{flex:1;border-radius:12px;padding:30px 6px 10px;text-align:center;font-weight:800;font-size:12px;color:#fff}
+.mats .k{background:#d4a94a}.mats .s{background:#6b7a88}.mats .r{background:#2f3a44}
+.road{position:absolute;left:0;right:0;bottom:90px;height:54px;background:#444;transform:skewY(-6deg)}
+.route{margin-top:24px;border:1px solid var(--line);border-radius:26px;padding:30px 32px;background:#f3fbff;font-size:17px;line-height:1.6}
+.route .h{margin-bottom:6px}
+.dashline{height:10px;margin:30px 0;background:repeating-linear-gradient(90deg,var(--yellow) 0 40px,transparent 40px 69px)}
+.safe{border:1px solid #fde2b8;background:#fff6e8;border-radius:26px;padding:26px 32px}
+.safe h3{font-family:Georgia,serif;color:#b45309;margin-bottom:8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.box{border-radius:28px;padding:26px 32px;line-height:1.75;font-size:17px;border:1px solid var(--line)}
+.box p+p{margin-top:2px}
+.box.blue{background:linear-gradient(135deg,#eaf9fd,#f6fcff)}
+.box.orange{background:#fff6e8;border-color:#fde2b8}
+.box.white{background:#fff;padding:30px 32px}
+@media(max-width:1100px){.two{grid-template-columns:1fr}}
+.problem-img{display:block;width:100%;margin-top:18px;border-radius:20px;box-shadow:0 8px 24px #0f6cc422}
+.problem h2{position:absolute;top:14px;left:0;right:0;text-align:center;z-index:2;color:#fff;font-size:44px;font-weight:900;-webkit-text-stroke:2px #e67e00;paint-order:stroke fill;text-shadow:0 3px 0 #b45309}
+.problem .side{position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:90px 20px 20px}
+.problem .dry{background:linear-gradient(180deg,#bfe6ff,#e8f7ff 50%,#555 50%)}
+.problem .wet{background:linear-gradient(180deg,#5a6e86,#7d93aa 50%,#2c3e55 50%)}
+.tag{align-self:flex-start;background:#fff;border-radius:12px;padding:8px 12px;font-weight:900;font-size:15px;color:#13324b}
+.tag small{display:block;font-size:10px;color:#e67e00}
+.problem .car{font-size:64px;text-align:center}
+.badge{align-self:flex-end;border-radius:12px;padding:10px 14px;font-weight:900;font-size:13px;color:#fff}
+.badge.ok{background:#16a34a}.badge.bad{background:#dc2626}
+.girl3{display:flex;align-items:center;justify-content:center;font-size:60px;background:linear-gradient(90deg,#e8f7ff,#7d93aa);z-index:1}
+.note{margin-top:14px;border-left:4px solid var(--teal);background:#eefafd;border-radius:10px;padding:12px 16px;font-size:14px;color:var(--muted)}
+@media(max-width:1100px){.problem{grid-template-columns:1fr 1fr;height:auto}.girl3{display:none}}
+.obs{padding:18px}
+.obs .ph{background:#fffae8;border-radius:14px;height:66px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:12px}
+.obs label{display:block;font-weight:800;font-size:13px;margin:10px 0 6px}
+.obs textarea{width:100%;height:56px;border:1px solid #cfe6ee;border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical;background:#fff}
+.obs textarea:focus{outline:2px solid var(--teal)}
+.yt-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000}
+.yt-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.ivideo{display:block;width:100%;max-height:560px;border-radius:14px;background:#000}
+.yt{display:flex;align-items:center;gap:16px;margin-top:20px;padding:16px 22px;background:#fff;border:1.5px solid #ffd0d0;border-radius:20px;text-decoration:none;color:var(--ink);box-shadow:0 6px 18px #ff000014;transition:transform .15s,box-shadow .15s}
+.yt:hover{transform:translateY(-2px);box-shadow:0 10px 24px #ff000026}
+.yt-ico{display:flex;width:52px;height:52px;border-radius:14px;background:#fff1f1;align-items:center;justify-content:center;flex:none}
+.yt-txt{display:flex;flex-direction:column;flex:1}
+.yt-txt b{font-size:17px}
+.yt-txt small{color:var(--muted);font-size:13px;margin-top:2px}
+.yt-go{font-size:22px;font-weight:800;color:#e60000}
+.iv{align-items:start}
+.side-img{display:block;width:100%;height:auto;border-radius:20px;box-shadow:0 8px 24px #0f6cc422}
+.ivimg{background:#dff0f6;border-radius:20px;min-height:200px;padding:10px;font-size:14px;color:var(--muted)}
+.lb{display:block;font-weight:800;font-size:13px;margin:14px 0 6px}
+.iv select{width:100%;padding:12px;border:1px solid #cfe6ee;border-radius:12px;font:inherit;font-size:14px;background:#fff}
+.iv textarea{width:100%;height:56px;border:1px solid #cfe6ee;border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical;background:#fff}
+.sq{padding:18px;min-height:140px}
+.sq p{margin-bottom:10px;font-size:15px}
+.opt{display:block;border:1px solid #cfe6ee;border-radius:10px;padding:9px 12px;margin-bottom:6px;font-size:14px;cursor:pointer;background:#fff}
+.opt:hover{background:#eef8fc}
+.opt input{margin-right:8px}
+.sq textarea{width:100%;height:60px;border:1px solid #cfe6ee;border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+@media(max-width:900px){.three{grid-template-columns:1fr}}
+.hp{padding:22px 24px}
+.pick{margin-top:6px;background:#fff;border:1.5px solid var(--line);color:var(--blue);font-weight:800;font-size:16px;padding:11px 18px;border-radius:12px}
+.pick:hover{background:#eef8fc}
+.hp.chosen{outline:3px solid var(--teal)}
+.hp.chosen .pick{background:var(--blue);color:#fff}
+.matimg{aspect-ratio:967/544;border-radius:20px;box-shadow:0 8px 24px #0f6cc422;margin-bottom:0;
+  background:url(images/materials-screen.webp) no-repeat;background-size:197.6% auto;background-position:61.8% 26.2%}
+.mat{padding:22px 24px;border-radius:0 0 28px 28px}
+.mat p{font-size:15px;line-height:1.6}
+.dots{height:80px;border-radius:12px;margin-bottom:34px;background-color:#ffffff99;background-image:radial-gradient(var(--c) 35%,transparent 38%);background-size:14px 14px}
+.cropimg{border-radius:20px 20px 0 0;background-repeat:no-repeat;box-shadow:0 8px 24px #0f6cc422}
+.ex{padding:22px 24px}
+.ex .chip2{display:inline-block;background:#d3f3f6;color:#0a7a88;font-weight:800;font-size:12px;padding:6px 12px;border-radius:16px;margin-bottom:12px}
+.ex label{display:block;font-weight:800;font-size:12px;margin:8px 0 4px}
+.ex input{width:100%;padding:11px 12px;border:1px solid #cfe6ee;border-radius:10px;font:inherit;font-size:14px;background:#fff}
+.ex b{display:block;margin-top:10px;font-size:13px}
+.tblwrap{overflow-x:auto;margin-top:16px;border:1px solid var(--line);border-radius:16px;background:#fff}
+.rt{border-collapse:collapse;width:100%;font-size:12px;min-width:900px}
+.rt th{background:#eef8fc;text-align:left;padding:10px 8px;color:var(--blue);font-size:11px;white-space:nowrap}
+.rt tbody th{background:#f4fbfe;color:var(--blue)}
+.rt td{padding:8px 6px;border-top:1px solid var(--line);white-space:nowrap}
+.ci{width:52px;padding:10px 6px;border:1px solid #cfe6ee;border-radius:10px;font:inherit;font-size:13px}
+.rt td:nth-child(12) .ci{width:70px}
+.tabs{display:flex;flex-wrap:wrap;gap:10px}
+.tab{min-width:40px;height:40px;padding:0 14px;border-radius:12px;background:#fff;border:1px solid var(--line);font-weight:800;color:var(--ink)}
+.tab:hover{background:#eef8fc}
+.tab.on{background:linear-gradient(90deg,var(--blue),var(--teal));color:#fff;border-color:transparent}
+.dt{width:100%;height:56px;border:1px solid #cfe6ee;border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
+.placeholder{padding:80px 0;text-align:center;color:var(--muted);font-size:20px}
+footer{position:absolute;left:330px;right:0;bottom:0;height:78px;background:#fffffff2;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 28px;backdrop-filter:blur(6px)}
+footer .back{background:#fff;border:1px solid var(--line);color:var(--blue);padding:14px 20px;border-radius:12px;font-family:Georgia,serif;font-weight:700}
+footer .next{background:linear-gradient(90deg,var(--blue),#1a8fd6);color:#fff;padding:16px 32px;border-radius:14px;font-family:Georgia,serif;font-weight:700;font-size:16px}
+footer .num{font-weight:800;font-size:17px}
+@media(max-width:1100px){.hero{grid-template-columns:1fr}.scroll{padding:24px 24px 110px}}
+@media(max-width:800px){aside{display:none}footer{left:0}}
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand">🛣️ ZERDE • ROAD LAB</div>
+  <div class="sys">AMINA SCIENCE SYSTEM</div>
+  <nav id="nav"></nav>
+</aside>
+
+<main>
+  <header>
+    <div><div class="t1">АМИНА / ROAD SCIENCE LAB</div><div class="t2" id="crumb">🏁 Басты бет</div></div>
+    <div class="r">ФИЗИКА • 3-СЫНЫП</div>
+  </header>
+
+  <div class="scroll" id="view"></div>
+</main>
+
+<footer>
+  <button class="back" id="prev">← АРТҚА</button>
+  <div class="num" id="num">1 / 19</div>
+  <button class="next" id="next">КЕЛЕСІ →</button>
+</footer>
+
+<template id="home">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 01</div>
+  <div class="title">АМИНАНЫҢ ЖОЛ ЗЕРТХАНАСЫ</div>
+  <div class="sub">Тайғанауға төзімді жол жабынының моделін әзірлеу</div>
+
+  <div class="hero">
+    <div class="card">
+      <span class="chip">МАҢҒЫСТАУ · ЗЕРДЕ · ФИЗИКА</span>
+      <p>Үш жабын. Бір әділ тәжірибе.</p>
+      <div class="lane"><span>🟡 А · ҚҰМ</span><i class="dash"></i><span class="car">🚙 →</span></div>
+      <div class="lane"><span>⚪ В · ҰСАҚ ТАС</span><i class="dash"></i><span class="car">🚙 →</span></div>
+      <div class="lane"><span>⚫ С · РЕЗЕҢКЕ</span><i class="dash"></i><span class="car">🚙 →</span></div>
+      <div class="btns">
+        <button class="btn b1" data-go="2">🚗 ЗЕРТТЕУДІ БАСТА</button>
+        <button class="btn b2" id="try">🧪 3 ЖАБЫНДЫ СЫНА</button>
+        <button class="btn b3" data-go="18">📊 НӘТИЖЕЛЕР</button>
+        <button class="btn b3" data-go="7">📋 САУАЛНАМА</button>
+      </div>
+    </div>
+    <img class="hero-img" src="images/hero.webp" alt="Аминаның жол зертханасы">
+  </div>
+
+  <div class="route">
+    <div class="h">Зерттеу маршруты</div>
+    Ауылдағы жол → сұрақ → маман → сауалнама → модель → өлшеу → кесте → график → талдау → қорытынды → ғылыми өнім.
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p3">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 03</div>
+  <div class="title" style="margin-bottom:18px">Жолдың беті неліктен маңызды?</div>
+  <div class="two">
+    <div class="box orange"><p>🌞 Құрғақ жол</p><p>Жақсы ұстасу болуы мүмкін; жүргізушіге басқару жеңілдеу.</p></div>
+    <div class="box blue"><p>🌧️ Ылғал жол</p><p>Сырғанау қаупі артуы, тоқтау жолы ұзаруы мүмкін.</p></div>
+  </div>
+  <img class="problem-img" src="images/problem.webp" alt="Мәселе неде?">
+  <div class="note">Сурет — тақырыптық иллюстрация, өлшенген нәтиже емес.</div>
+  <div class="box white" style="margin-top:20px;padding:22px 24px">
+    <p style="margin-bottom:12px">🎬 Мәселе туралы видео</p>
+    <div class="yt-frame"><iframe src="https://www.youtube.com/embed/e7_cHxjHLEg" title="Мәселе туралы видео" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+    <a class="yt" href="https://www.youtube.com/watch?v=e7_cHxjHLEg" target="_blank" rel="noopener noreferrer" style="margin-top:14px;padding:12px 18px">
+      <span class="yt-ico"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="5" fill="#ff0000"/><path d="M10 8.7v6.6l5.6-3.3z" fill="#fff"/></svg></span>
+      <span class="yt-txt"><b>YouTube-та көру</b></span>
+      <span class="yt-go">↗</span>
+    </a>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p5">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 05</div>
+  <div class="title">Далалық бақылау</div>
+  <div class="sub" style="font-size:16px;margin-bottom:20px">Нақты далалық фотолар берілмеген. Бұл жақтауларды кейін жеке суреттермен алмастыруға болады.</div>
+  <div class="box white" style="margin-bottom:20px;padding:22px 24px">
+    <p style="margin-bottom:12px">🎬 Далалық бақылау видеосы</p>
+    <div class="yt-frame"><iframe src="https://www.youtube.com/embed/X-_6bUJowrw" title="Далалық бақылау видеосы" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+    <a class="yt" href="https://www.youtube.com/watch?v=X-_6bUJowrw" target="_blank" rel="noopener noreferrer" style="margin-top:14px;padding:12px 18px">
+      <span class="yt-ico"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="5" fill="#ff0000"/><path d="M10 8.7v6.6l5.6-3.3z" fill="#fff"/></svg></span>
+      <span class="yt-txt"><b>YouTube-та көру</b></span>
+      <span class="yt-go">↗</span>
+    </a>
+  </div>
+  <div class="two">
+    <div class="box white obs"><div class="ph">📷 Нақты фотоға орын</div><p>Жол құрылысының жалпы көрінісі</p><label>Мен не байқадым?</label><textarea></textarea></div>
+    <div class="box white obs"><div class="ph">📷 Нақты фотоға орын</div><p>Қолданылған материалдар</p><label>Мен не байқадым?</label><textarea></textarea></div>
+    <div class="box white obs"><div class="ph">📷 Нақты фотоға орын</div><p>Маманмен әңгімелесу</p><label>Мен не байқадым?</label><textarea></textarea></div>
+    <div class="box white obs"><div class="ph">📷 Нақты фотоға орын</div><p>Жол қабатын бақылау</p><label>Мен не байқадым?</label><textarea></textarea></div>
+  </div>
+  <div class="box white obs" style="margin-top:20px">
+    <p>FIELD NOTES</p>
+    <label>Мен байқадым</label><textarea></textarea>
+    <label>Маған қызық болғаны</label><textarea></textarea>
+    <label>Мен сұрағым келгені</label><textarea></textarea>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p6">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 06</div>
+  <div class="title">Жолды калай жасайды? Маманнан сұрайық</div>
+  <div class="sub" style="font-size:16px;margin-bottom:20px">Нақты жауап болмаса, ешқандай жауап ойдан шығарылмайды.</div>
+  <div class="two iv">
+    <img class="side-img" src="images/interview.webp" alt="Жолшылармен сұхбат">
+    <div class="box blue">
+      <p>🎤 Сұхбат журналы</p>
+      <p>Жауап берілгені: <span id="cnt">0</span> / 10</p>
+      <label class="lb">Сұрақты таңда</label>
+      <select id="q"></select>
+      <p id="qtext" style="margin-top:16px"></p>
+      <label class="lb">Маманның нақты жауабы</label>
+      <textarea id="ans"></textarea>
+      <p id="st" style="font-size:14px;margin:8px 0 6px"></p>
+      <button class="btn b1" id="save" style="padding:10px 16px;font-size:14px">💾 ЖАУАПТЫ САҚТА</button>
+    </div>
+  </div>
+  <div class="box white" style="margin-top:20px;padding:22px 24px">
+    <p style="margin-bottom:12px">🎬 Сұхбат видеосы</p>
+    <div class="yt-frame"><iframe src="https://www.youtube.com/embed/LtCY2xqqCsg" title="Сұхбат видеосы" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+    <a class="yt" href="https://www.youtube.com/watch?v=LtCY2xqqCsg" target="_blank" rel="noopener noreferrer" style="margin-top:14px;padding:12px 18px">
+      <span class="yt-ico"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="5" fill="#ff0000"/><path d="M10 8.7v6.6l5.6-3.3z" fill="#fff"/></svg></span>
+      <span class="yt-txt"><b>YouTube-та көру</b></span>
+      <span class="yt-go">↗</span>
+    </a>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p7">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 07</div>
+  <div class="title">Жол қауіпсіздігі туралы қалай ойлайсыз?</div>
+  <div class="sub" style="font-size:16px;margin-bottom:20px">Қысқа анонимді сауалнама. Есім, телефон, мекенжай немесе email сұралмайды.</div>
+  <div class="two">
+    <img class="side-img" src="images/survey.webp" alt="Онлайн сауалнама. Суреттегі сандар нақты жауап емес">
+    <div class="box blue"><p>📋 Сіздің пікіріңіз маңызды.</p><p>Пікір ғылыми өлшемді алмастырмайды. Жауаптарды Аминаның тәжірибесімен бөлек салыстырамыз.</p><p style="font-size:13px;color:var(--muted)">Суреттегі сандар — иллюстрация, нақты жауап емес.</p></div>
+  </div>
+  <div class="two" id="sv" style="margin-top:20px"></div>
+  <div style="margin-top:16px"><button class="btn b1" id="send" style="padding:11px 18px;font-size:14px">📨 САУАЛНАМАНЫ ЖІБЕРУ</button> <span id="sent" style="margin-left:12px;font-weight:700"></span></div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p8">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 08</div>
+  <div class="title" style="margin-bottom:14px">Зерттеу сұрағы</div>
+  <div class="box orange" style="background:linear-gradient(135deg,#fff6e8,#f4fbff);border-color:#d9ecf3;padding:22px 24px">
+    Құм, ұсақ тас және резеңке түйіршігі бар үш жол үлгісінің қайсысында модельдік сырғанау аз болады?
+  </div>
+  <div class="three">
+    <div class="box white"><p>🟠 Не өзгертеміз?</p><p>Жабын материалын</p></div>
+    <div class="box white"><p>🔵 Не өлшейміз?</p><p>Сырғанау мен тоқтау қашықтығын</p></div>
+    <div class="box white"><p>🟢 Нені бірдей ұстаймыз?</p><p>Көлік, старт, рампа, жол ұзындығы және өлшеу әдісін</p></div>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p9">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 09</div>
+  <div class="title">Менің болжамым</div>
+  <div class="sub" style="font-size:16px;margin-bottom:20px">Бұл дайын қорытынды емес: тәжірибемен тексерілетін ой.</div>
+  <div class="three">
+    <div class="box orange hp"><p>A · Құм</p><button class="pick" data-h="A">Осыны таңдау</button></div>
+    <div class="box blue hp"><p>B · Ұсақ тас</p><button class="pick" data-h="B">Осыны таңдау</button></div>
+    <div class="box hp" style="background:linear-gradient(135deg,#eefaf5,#f6fcff)"><p>C · Резеңке түйіршігі</p><button class="pick" data-h="C">Осыны таңдау</button></div>
+  </div>
+  <div class="box white" style="margin-top:16px;padding:26px 24px">
+    <label class="lb" style="margin-top:0">Неліктен таңдадың?</label>
+    <textarea id="why" style="width:100%;height:70px;border:1px solid #cfe6ee;border-radius:12px;padding:10px;font:inherit;resize:vertical"></textarea>
+    <p style="font-size:15px;color:var(--muted);margin-top:6px">Нақты жауап өлшеуден кейін белгілі болады.</p>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p10">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 10</div>
+  <div class="title" style="margin-bottom:14px">Айнымалылар</div>
+  <div class="three">
+    <div class="box orange"><p>🟠 Өзгертемін</p><p>Жабын материалы.</p></div>
+    <div class="box blue"><p>🔵 Өлшеймін</p><p>Сырғанау көрсеткіші және тоқтау аралығы.</p></div>
+    <div class="box" style="background:linear-gradient(135deg,#eefaf5,#f6fcff)"><p>🟢 Бірдей ұстаймын</p><p>Көлік, старт, рампа, жол ұзындығы, сынақ саны.</p></div>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p11">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 11</div>
+  <div class="title" style="margin-bottom:14px">Материалдар зертханасы</div>
+  <!-- Сурет скриншоттан қиылған. Түпнұсқа суретті images/materials.webp деп қойсаң, .matimg ішіндегі background-ты ауыстыр -->
+  <div class="matimg"></div>
+  <div class="three" style="margin-top:0">
+    <div class="box orange mat"><div class="dots" style="--c:#fbbf24"></div><p>Құм</p><p>Көптеген ұсақ түйіршіктен тұрады.</p><p><b>Ұсақ түйірлер ұстасуға қалай әсер етеді?</b></p></div>
+    <div class="box blue mat"><div class="dots" style="--c:#12b5c8"></div><p>Ұсақ тас</p><p>Бөлшектері ірірек әрі бұрышты болуы мүмкін.</p><p><b>Бұрышты бөлшектер бетті қалай өзгертеді?</b></p></div>
+    <div class="box mat" style="background:linear-gradient(135deg,#eefaf5,#f6fcff)"><div class="dots" style="--c:#4ade80"></div><p>Резеңке түйіршігі</p><p>Резеңке — серпімді материал.</p><p><b>Серпімділік сырғанауға қалай әсер етуі мүмкін?</b></p></div>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p13">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 13</div>
+  <div class="title">Тәжірибе №1 · Көлбеу бет</div>
+  <div class="sub" style="font-size:16px;margin-bottom:20px">Бірдей көлік • бірдей старт • үш қайталау • өлшем бірлігі: см</div>
+  <div class="cropimg" style="aspect-ratio:725/408;background-image:url(images/exp1-screen.webp);background-size:237.9% auto;background-position:48.8% 26.2%"></div>
+  <div class="three" style="margin-top:0">
+    <div class="box orange mat ex"><span class="chip2">A · Құм</span>
+      <label>Сынақ 1 (см)</label><input data-k="A1" inputmode="decimal"><label>Сынақ 2 (см)</label><input data-k="A2" inputmode="decimal"><label>Сынақ 3 (см)</label><input data-k="A3" inputmode="decimal">
+      <b>Орташа: <span id="avgA"></span></b></div>
+    <div class="box blue mat ex"><span class="chip2">B · Ұсақ тас</span>
+      <label>Сынақ 1 (см)</label><input data-k="B1" inputmode="decimal"><label>Сынақ 2 (см)</label><input data-k="B2" inputmode="decimal"><label>Сынақ 3 (см)</label><input data-k="B3" inputmode="decimal">
+      <b>Орташа: <span id="avgB"></span></b></div>
+    <div class="box mat ex" style="background:linear-gradient(135deg,#eefaf5,#f6fcff)"><span class="chip2">C · Резеңке түйіршігі</span>
+      <label>Сынақ 1 (см)</label><input data-k="C1" inputmode="decimal"><label>Сынақ 2 (см)</label><input data-k="C2" inputmode="decimal"><label>Сынақ 3 (см)</label><input data-k="C3" inputmode="decimal">
+      <b>Орташа: <span id="avgC"></span></b></div>
+  </div>
+  <button class="btn b1" id="calc" style="margin-top:16px;padding:11px 18px;font-size:14px">🧮 ОРТАША МӘН</button>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p14">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 14</div>
+  <div class="title">Тәжірибе №2 · Тоқтау жолы</div>
+  <div class="sub" style="font-size:16px;margin-bottom:20px">РАМПА → СТАРТ → 🚙 МОДЕЛЬ КӨЛІК → ЖОЛ ҮЛГІСІ → ТОҚТАУ</div>
+  <div class="cropimg" style="aspect-ratio:725/408;background-image:url(images/exp2-screen.webp);background-size:110.2% auto;background-position:37.8% 15.7%"></div>
+  <div class="three" style="margin-top:0">
+    <div class="box orange mat ex"><span class="chip2">A · Құм</span>
+      <label>Сынақ 1 (см)</label><input data-k="A1" inputmode="decimal"><label>Сынақ 2 (см)</label><input data-k="A2" inputmode="decimal"><label>Сынақ 3 (см)</label><input data-k="A3" inputmode="decimal">
+      <b>Орташа: <span id="avgA"></span></b></div>
+    <div class="box blue mat ex"><span class="chip2">B · Ұсақ тас</span>
+      <label>Сынақ 1 (см)</label><input data-k="B1" inputmode="decimal"><label>Сынақ 2 (см)</label><input data-k="B2" inputmode="decimal"><label>Сынақ 3 (см)</label><input data-k="B3" inputmode="decimal">
+      <b>Орташа: <span id="avgB"></span></b></div>
+    <div class="box mat ex" style="background:linear-gradient(135deg,#eefaf5,#f6fcff)"><span class="chip2">C · Резеңке түйіршігі</span>
+      <label>Сынақ 1 (см)</label><input data-k="C1" inputmode="decimal"><label>Сынақ 2 (см)</label><input data-k="C2" inputmode="decimal"><label>Сынақ 3 (см)</label><input data-k="C3" inputmode="decimal">
+      <b>Орташа: <span id="avgC"></span></b></div>
+  </div>
+  <button class="btn b1" id="calc" style="margin-top:16px;padding:11px 18px;font-size:14px">🧮 ОРТАША МӘН</button>
+  <div class="note" style="margin-top:16px">Қай үлгінің орташа тоқтау жолы қысқа? Жауапты тек толық өлшемнен шығар.</div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p15">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 15</div>
+  <div class="title" style="margin-bottom:14px">Тәжірибе №3 · Құрғақ және ылғал</div>
+  <div class="cropimg" style="aspect-ratio:725/408;background-image:url(images/exp3-screen.webp);background-size:104.1% auto;background-position:16.7% 12.6%"></div>
+  <div class="three" style="margin-top:0">
+    <div class="box orange mat ex"><p>Құм</p>
+      <label>🟠 Құрғақ (см)</label><input data-k="DA" inputmode="decimal"><label>💧 Ылғал (см)</label><input data-k="WA" inputmode="decimal">
+      <b style="font-weight:400">Абсолют айырмашылық: <b style="display:inline" id="diffA"></b></b></div>
+    <div class="box blue mat ex"><p>Ұсақ тас</p>
+      <label>🟠 Құрғақ (см)</label><input data-k="DB" inputmode="decimal"><label>💧 Ылғал (см)</label><input data-k="WB" inputmode="decimal">
+      <b style="font-weight:400">Абсолют айырмашылық: <b style="display:inline" id="diffB"></b></b></div>
+    <div class="box mat ex" style="background:linear-gradient(135deg,#eefaf5,#f6fcff)"><p>Резеңке түйіршігі</p>
+      <label>🟠 Құрғақ (см)</label><input data-k="DC" inputmode="decimal"><label>💧 Ылғал (см)</label><input data-k="WC" inputmode="decimal">
+      <b style="font-weight:400">Абсолют айырмашылық: <b style="display:inline" id="diffC"></b></b></div>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p17">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 17</div>
+  <div class="title" style="margin-bottom:14px">Өлшеу орталығы</div>
+  <div class="three">
+    <div class="box white" style="padding:20px 24px">📏 Сызғыш — қашықтық</div>
+    <div class="box white" style="padding:20px 24px">⏱️ Секундомер — уақыт</div>
+    <div class="box white" style="padding:20px 24px">📐 Бұрыш өлшегіш — көлбеу</div>
+    <div class="box white" style="padding:20px 24px">🚙 Бірдей модель көлік</div>
+    <div class="box white" style="padding:20px 24px">🖼️ Бірдей өлшемді үлгілер</div>
+    <div class="box white" style="padding:20px 24px">📋 Деректер парағы — жазба</div>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p18">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 18</div>
+  <div class="title">Нақты нәтижелер кестесі</div>
+  <div class="sub" style="font-size:16px;margin-bottom:20px">Сандар тек өзің енгізген өлшемдерден алынады. Жазбалар осы ашық бет сессиясында қалады.</div>
+  <div class="cropimg" style="width:280px;height:158px;border-radius:14px;background-image:url(images/results-screen.png);background-size:681% auto;background-position:41.2% 19.1%"></div>
+  <div class="tblwrap"><table class="rt">
+    <thead><tr><th>Материал</th><th>Көлбеу 1</th><th>2</th><th>3</th><th>Орташа</th><th>Тоқтау 1</th><th>2</th><th>3</th><th>Орташа</th><th>Құрғақ</th><th>Ылғал</th><th>Ескерту</th><th>Әрекет</th></tr></thead>
+    <tbody id="rb"></tbody>
+  </table></div>
+  <div style="margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <button class="btn b1" id="rsave" style="padding:11px 16px;font-size:14px">💾 ОСЫ СЕССИЯДА САҚТА</button>
+    <button class="btn b3" id="rcalc" style="padding:11px 16px;font-size:14px">🧮 ЕСЕПТЕ</button>
+    <span id="rmsg" style="font-weight:700"></span>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p23">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 23</div>
+  <div class="title" style="margin-bottom:14px">Физика түсіндірмесі</div>
+  <div class="three">
+    <div class="box orange"><p>🛞 Үйкеліс</p><p>Бір-біріне тиетін беттердің қозғалысқа әсері.</p></div>
+    <div class="box blue"><p>🚙 Қозғалыс</p><p>Көліктің орнын өзгертуі.</p></div>
+    <div class="box" style="background:linear-gradient(135deg,#eefaf5,#f6fcff)"><p>📏 Тоқтау жолы</p><p>Модель көліктің старттан тоқтаған жерге дейінгі аралығы.</p></div>
+  </div>
+  <div class="box" style="margin-top:16px;background:linear-gradient(135deg,#eaf9fd,#fffaf0);border:2px solid #7fdbe8;padding:22px 24px;border-radius:22px;font-size:15px">
+    Көлік қозғалады → дөңгелек жолға тиеді → үйкеліс пайда болады → жол беті нәтижеге әсер етеді.
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p26">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 26</div>
+  <div class="title" style="margin-bottom:14px">10 практикалық жұмыс</div>
+  <div id="tt" class="tabs"></div>
+  <div class="box white" style="margin-top:18px;padding:22px 24px">
+    <p id="tq" style="font-size:14px;margin-bottom:8px"></p>
+    <label class="lb" style="margin-top:6px">Менің жауабым</label>
+    <textarea id="ta" style="width:100%;height:70px;border:1px solid #cfe6ee;border-radius:12px;padding:10px;font:inherit;resize:vertical"></textarea>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p31">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 31</div>
+  <div class="title" style="margin-bottom:14px">Аминаның ғылыми өнімі</div>
+  <div class="three">
+    <div class="box white" style="padding:20px 24px">🟡 A · Құм жол моделі</div>
+    <div class="box white" style="padding:20px 24px">⚪ B · Ұсақ тас жол моделі</div>
+    <div class="box white" style="padding:20px 24px">⚫ C · Резеңке жол моделі</div>
+    <div class="box white" style="padding:20px 24px">📋 Нәтижелер кестесі</div>
+    <div class="box white" style="padding:20px 24px">📊 Нақты дерек графиктері</div>
+    <div class="box white" style="padding:20px 24px">📋 Аноним сауалнама</div>
+    <div class="box white" style="padding:20px 24px">🎤 Маманмен сұхбат</div>
+    <div class="box white" style="padding:20px 24px">🗂️ Дерек кемекшісі</div>
+    <div class="box white" style="padding:20px 24px">📘 Зерттеу паспорты</div>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p35">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 35</div>
+  <div class="title">Қорғау тренажері</div>
+  <div class="sub" style="font-size:16px;margin-bottom:20px">Жеті сұраққа өз сөзіңмен жауап бер.</div>
+  <div class="box white" style="padding:26px 24px">
+    <div id="dq"></div>
+    <div style="margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <button class="btn b1" id="dready" style="padding:11px 16px;font-size:14px">🎤 ҚОРҒАУҒА ДАЙЫНМЫН</button>
+      <span id="dmsg" style="font-weight:700"></span>
+    </div>
+  </div>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<template id="p2">
+  <div class="eyebrow">ZERDE • ROAD SCIENCE LAB / 02</div>
+  <div class="title" style="margin-bottom:18px">Амина, Нұрғожа жас зерттеушілер</div>
+  <div class="two">
+    <div class="box blue">
+      <p>👧 Аманқали Әмина, Жаңабай Нұрғожа</p>
+      <p>3-сынып · Физика · «Зерде» республикалық зерттеу жобалары мен шығармашылық жұмыстарының конкурсы.</p>
+      <p><b>Тақырып:</b> «Тайғақ жолға қарсы: асфальт қандай материалдан жасаған тиімді?»</p>
+    </div>
+    <div class="box orange">
+      <p>Зерттеу тобы</p>
+      <p><b>Жетекші:</b> Сүндет Әлия Хамидоллақызы</p>
+      <p><b>Мектеп:</b> “Ә. Кекілбайұлы атындағы жалпы білім беретін мектеп” КММ</p>
+      <p>Маңғыстау облысы, Маңғыстау ауданы</p>
+    </div>
+  </div>
+  <div class="box white" style="margin-top:24px">
+    <p>Аминаның сөзі</p>
+    <p>«Мен жолдың неге тайғанақ болатынын және жол бетінің материалы көліктің сырғанауына қалай әсер ететінін модель арқылы зерттегім келді.»</p>
+  </div>
+  <a class="yt" href="https://www.youtube.com/shorts/dkIwpFwEAXI" target="_blank" rel="noopener noreferrer">
+    <span class="yt-ico"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="5" fill="#ff0000"/><path d="M10 8.7v6.6l5.6-3.3z" fill="#fff"/></svg></span>
+    <span class="yt-txt"><b>YouTube-та көру</b><small>Жоба туралы қысқа видео</small></span>
+    <span class="yt-go">↗</span>
+  </a>
+  <div class="dashline"></div>
+  <div class="safe">
+    <h3>⚠️ Қауіпсіздік және ғылыми шектеу</h3>
+    Амина жол құрылысына тек ересек адаммен баруы керек. Жұмыс істеп тұрған техникаға жақындама, жолға шықпа, жұмыс аймағына рұқсатсыз кірме, материалға рұқсатсыз қол тигізбе және жұмышшыларға кедергі жасама. Сұхбатты қауіпсіз жерде өткіз. Зертханада ыстық битум, ашық от және қауіпті ерітқіш қолданба; тек қауіпсіз мектептік модель жаса.<br>
+    Бұл — мектеп жағдайындағы модельдік тәжірибе. Нақты автомобиль жолының құрамы инженерлік стандарттарға, климатқа, көлік жүктемесіне, дренажға, битум мен минералдық материалдардың қасиеттеріне және басқа факторларға байланысты анықталады.
+  </div>
+</template>
+
+<script>
+const pages = [
+ "🏁 Басты бет","👧 Амина, Нұрғожа жас зерттеушілер","🚗 Мәселе","🛣️ Ауылдағы жол құрылысы","📷 Далалық бақылау",
+ "🎤 Маманмен сұхбат","📋 Онлайн сауалнама","❓ Зерттеу сұрағы","💡 Болжам","⚙️ Айнымалылар",
+ "🧱 Материалдар зертханасы","🛠️ Модель жасау","🧪 Тәжірибе 1","🚙 Тәжірибе 2","💧 Тәжірибе 3",
+ "⚖️ Дөңгелек пен жол","📏 Өлшеу орталығы","📊 Нәтижелер кестесі",
+ "📈 Графиктер","📋 Survey Dashboard","🎤 Interview Dashboard","🤖 ROADBOT AMINA","🧬 Физика",
+ "🧪 Virtual Road Lab","🚗 Road Safety Mission","✍️ Практикалық жұмыс","❇️ Сәйкестендір","🚧 Жол жағдаяттары",
+ "🕵️ Қатені тап","⚖️ Final Comparison","🎁 Өнім","📘 Зерттеу паспорты","✅ Қорытынды","💡 Аминаның ұсынысы","🎤 Қорғау тренажері"
+];
+/* Тек осы беттер қалды (түпнұсқа нөмірлері) */
+const order=[1,2,3,5,6,7,8,9,10,11,13,14,15,17,18,23,26,31,35];
+const TOTAL=order.length;
+let cur=0, pos=0; // cur — pages ішіндегі түпнұсқа индекс, pos — қалған беттердегі орны
+const nav=document.getElementById('nav'), view=document.getElementById('view');
+order.forEach((n,k)=>{
+  const a=document.createElement('a');
+  const [ic,...rest]=pages[n-1].split(' ');
+  a.innerHTML=`<b>${String(k+1).padStart(2,'0')}.</b> ${ic} ${rest.join(' ')}`;
+  a.onclick=()=>go(k);
+  nav.appendChild(a);
+});
+const goOrig=n=>go(Math.max(0,order.indexOf(n)));
+function go(i){
+  pos=Math.max(0,Math.min(TOTAL-1,i));
+  cur=order[pos]-1;
+  [...nav.children].forEach((a,k)=>a.classList.toggle('active',k===pos));
+  nav.children[pos].scrollIntoView({block:'nearest'});
+  document.getElementById('crumb').textContent=pages[cur];
+  document.getElementById('num').textContent=(pos+1)+' / '+TOTAL;
+  view.scrollTop=0;
+  if(cur===0){
+    view.innerHTML=''; view.appendChild(document.getElementById('home').content.cloneNode(true));
+    view.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>goOrig(+b.dataset.go));
+    view.querySelector('#try').onclick=()=>{
+      view.querySelectorAll('.lane').forEach((l,k)=>{l.classList.remove('go');void l.offsetWidth;setTimeout(()=>l.classList.add('go'),k*250)});
+    };
+  } else if(cur===1){
+    view.innerHTML=''; view.appendChild(document.getElementById('p2').content.cloneNode(true));
+  } else if(cur===2){
+    view.innerHTML=''; view.appendChild(document.getElementById('p3').content.cloneNode(true));
+  } else if(cur===4){
+    view.innerHTML=''; view.appendChild(document.getElementById('p5').content.cloneNode(true));
+    view.querySelectorAll('textarea').forEach((t,k)=>{
+      try{t.value=localStorage.getItem('p5_'+k)||''}catch(e){}
+      t.oninput=()=>{try{localStorage.setItem('p5_'+k,t.value)}catch(e){}};
+    });
+  } else if(cur===5){
+    view.innerHTML=''; view.appendChild(document.getElementById('p6').content.cloneNode(true));
+    initInterview();
+  } else if(cur===6){
+    view.innerHTML=''; view.appendChild(document.getElementById('p7').content.cloneNode(true));
+    initSurvey();
+  } else if(cur===7){
+    view.innerHTML=''; view.appendChild(document.getElementById('p8').content.cloneNode(true));
+  } else if(cur===8){
+    view.innerHTML=''; view.appendChild(document.getElementById('p9').content.cloneNode(true));
+    initHyp();
+  } else if(cur===9){
+    view.innerHTML=''; view.appendChild(document.getElementById('p10').content.cloneNode(true));
+  } else if(cur===10){
+    view.innerHTML=''; view.appendChild(document.getElementById('p11').content.cloneNode(true));
+  } else if(cur===12){
+    view.innerHTML=''; view.appendChild(document.getElementById('p13').content.cloneNode(true));
+    initExp1();
+  } else if(cur===13){
+    view.innerHTML=''; view.appendChild(document.getElementById('p14').content.cloneNode(true));
+    initExp1('exp2');
+  } else if(cur===14){
+    view.innerHTML=''; view.appendChild(document.getElementById('p15').content.cloneNode(true));
+    initExp3();
+  } else if(cur===16){
+    view.innerHTML=''; view.appendChild(document.getElementById('p17').content.cloneNode(true));
+  } else if(cur===17){
+    view.innerHTML=''; view.appendChild(document.getElementById('p18').content.cloneNode(true));
+    initResults();
+  } else if(cur===22){
+    view.innerHTML=''; view.appendChild(document.getElementById('p23').content.cloneNode(true));
+  } else if(cur===25){
+    view.innerHTML=''; view.appendChild(document.getElementById('p26').content.cloneNode(true));
+    initTasks();
+  } else if(cur===30){
+    view.innerHTML=''; view.appendChild(document.getElementById('p31').content.cloneNode(true));
+  } else if(cur===34){
+    view.innerHTML=''; view.appendChild(document.getElementById('p35').content.cloneNode(true));
+    initDefense();
+  } else {
+    view.innerHTML=`<div class="placeholder"><h2>${pages[cur]}</h2><p style="margin-top:12px">Бұл бет кейін толтырылады.</p></div>`;
+  }
+  const ey=view.querySelector('.eyebrow');
+  if(ey) ey.textContent=ey.textContent.replace(/\/ \d+$/,'/ '+String(pos+1).padStart(2,'0'));
+}
+/* 6-бет: сұхбат журналы. Сұрақтарды осы тізімде өзгертуге болады */
+const QUESTIONS=[
+ "Жол төсеуге қандай материалдар қолданылады?",
+ "Қиыршық тас не үшін қажет?",
+ "Құмның қызметі қандай?",
+ "Жол бетінің кедір-бұдырлығы не үшін маңызды?",
+ "Жаңбыр кезінде жол неге тайғанақ болуы мүмкін?",
+ "Қыста тайғақтықты қалай азайтады?",
+ "Жол сапасы қалай тексеріледі?",
+ "Резеңке түйіршіктері жол құрылысында қолданыла ма?",
+ "Жолды ұзақ уақыт сапалы сақтау үшін не маңызды?",
+ "Балаларға жол қауіпсіздігі туралы қандай кеңес бересіз?"
+];
+function initInterview(){
+  let saved={};
+  try{saved=JSON.parse(localStorage.getItem('p6')||'{}')}catch(e){}
+  const sel=view.querySelector('#q'), q=view.querySelector('#qtext'), ans=view.querySelector('#ans'),
+        cnt=view.querySelector('#cnt'), st=view.querySelector('#st');
+  QUESTIONS.forEach((t,i)=>sel.add(new Option((i+1)+'. '+t,i)));
+  const count=()=>cnt.textContent=Object.values(saved).filter(v=>v.trim()).length;
+  const show=()=>{const i=+sel.value;q.textContent=QUESTIONS[i];ans.value=saved[i]||'';
+    st.textContent=(saved[i]||'').trim()?'Жауап сақталған.':'Жауап әлі енгізілмеген.'};
+  sel.onchange=show;
+  view.querySelector('#save').onclick=()=>{
+    saved[sel.value]=ans.value;
+    try{localStorage.setItem('p6',JSON.stringify(saved))}catch(e){}
+    count();show();
+  };
+  count();show();
+}
+/* 7-бет: онлайн сауалнама (жауаптар браузерде 'survey' кілтімен сақталады) */
+const SURVEY=[
+ {q:"Жаңбырдан кейін жолдың тайғақ болғанын байқадыңыз ба?",t:"r",o:["Иә","Жоқ","Кейде"]},
+ {q:"Кедір-бұдырлық қауіпсіздікке әсер ете ме?",t:"r",o:["Иә","Жоқ","Білмеймін"]},
+ {q:"Қай жағдайда жол қауіптірек?",t:"r",o:["Жаңбыр кезінде","Қар/мұз кезінде","Құрғақ кезде","Білмеймін"]},
+ {q:"Қай қасиеттер маңызды?",t:"c",o:["тайғанауға төзімділік","беріктік","суды өткізу/алу","шуды азайту","ұзақ қызмет ету"]},
+ {q:"Жол сапасын неден байқайсыз?",t:"r",o:["тегістігі","шұңқырлардың болуы","көліктің сырғанауы","судың жиналуы"]},
+ {q:"Жаңбырдан кейін жылдамдықты төмендету қажет пе?",t:"r",o:["Иә","Жоқ"]},
+ {q:"Материал қауіпсіздікке қаншалық әсер етеді?",t:"r",o:["1","2","3","4","5"]},
+ {q:"Балаларға қауіпсіздікті көбірек түсіндіру қажет пе?",t:"r",o:["Иә","Жоқ"]},
+ {q:"Жақсы жол қандай болуы керек?",t:"t"},
+ {q:"Қауіпсіздікке бір ұсыныс жазыңыз.",t:"t"}
+];
+function initSurvey(){
+  const box=view.querySelector('#sv');
+  SURVEY.forEach((s,i)=>{
+    const d=document.createElement('div'); d.className='box white sq';
+    let h=`<p><b>${i+1}. ${s.q}</b></p>`;
+    if(s.t==='t') h+=`<textarea name="q${i}"></textarea>`;
+    else s.o.forEach(o=>h+=`<label class="opt"><input type="${s.t==='r'?'radio':'checkbox'}" name="q${i}" value="${o}"> ${o}</label>`);
+    d.innerHTML=h; box.appendChild(d);
+  });
+  view.querySelector('#send').onclick=()=>{
+    const ans=SURVEY.map((s,i)=>{
+      const el=[...box.querySelectorAll(`[name=q${i}]`)];
+      return s.t==='t'?el[0].value:el.filter(e=>e.checked).map(e=>e.value);
+    });
+    let all=[]; try{all=JSON.parse(localStorage.getItem('survey')||'[]')}catch(e){}
+    all.push({time:Date.now(),ans});
+    try{localStorage.setItem('survey',JSON.stringify(all))}catch(e){}
+    view.querySelector('#sent').textContent='Рахмет! Жауабыңыз сақталды ('+all.length+').';
+    box.querySelectorAll('input').forEach(e=>e.checked=false);
+    box.querySelectorAll('textarea').forEach(e=>e.value='');
+  };
+}
+/* 9-бет: болжам (сақталады: 'hyp' кілті) */
+function initHyp(){
+  let h={}; try{h=JSON.parse(localStorage.getItem('hyp')||'{}')}catch(e){}
+  const save=()=>{try{localStorage.setItem('hyp',JSON.stringify(h))}catch(e){}};
+  const btns=[...view.querySelectorAll('[data-h]')], ta=view.querySelector('#why');
+  const paint=()=>btns.forEach(b=>{const on=b.dataset.h===h.pick;
+    b.closest('.box').classList.toggle('chosen',on);
+    b.textContent=on?'✅ Таңдалды':'Осыны таңдау'});
+  btns.forEach(b=>b.onclick=()=>{h.pick=b.dataset.h;save();paint()});
+  ta.value=h.why||''; ta.oninput=()=>{h.why=ta.value;save()};
+  paint();
+}
+/* 13-бет: Тәжірибе 1 (деректер 'exp1' кілтімен сақталады) */
+function initExp1(key){
+  key=key||'exp1';
+  let d={}; try{d=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
+  const ins=[...view.querySelectorAll('input[data-k]')];
+  const calc=()=>['A','B','C'].forEach(m=>{
+    const v=ins.filter(i=>i.dataset.k.startsWith(m)).map(i=>parseFloat(String(i.value).replace(',','.'))).filter(x=>!isNaN(x));
+    view.querySelector('#avg'+m).textContent=v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1)+' см':'Дерек енгізілмеді';
+  });
+  ins.forEach(i=>{i.value=d[i.dataset.k]||'';i.oninput=()=>{d[i.dataset.k]=i.value;try{localStorage.setItem(key,JSON.stringify(d))}catch(e){}}});
+  view.querySelector('#calc').onclick=calc;
+  calc();
+}
+/* 15-бет: Тәжірибе 3, құрғақ vs ылғал ('exp3' кілті) */
+function initExp3(){
+  let d={}; try{d=JSON.parse(localStorage.getItem('exp3')||'{}')}catch(e){}
+  const ins=[...view.querySelectorAll('input[data-k]')];
+  const num=k=>parseFloat(String(d[k]||'').replace(',','.'));
+  const calc=()=>['A','B','C'].forEach(m=>{
+    const a=num('D'+m), b=num('W'+m);
+    view.querySelector('#diff'+m).textContent=(isNaN(a)||isNaN(b))?'Дерек енгізілмеді':Math.abs(b-a).toFixed(1)+' см';
+  });
+  ins.forEach(i=>{i.value=d[i.dataset.k]||'';i.oninput=()=>{d[i.dataset.k]=i.value;try{localStorage.setItem('exp3',JSON.stringify(d))}catch(e){};calc()}});
+  calc();
+}
+/* 18-бет: нәтижелер кестесі ('results' кілті) */
+function initResults(){
+  const mats=["Құм","Ұсақ тас","Резеңке түйіршігі"];
+  let d={}; try{d=JSON.parse(localStorage.getItem('results')||'{}')}catch(e){}
+  const body=view.querySelector('#rb');
+  const cell=(m,k,w)=>`<td><input class="ci" data-k="${m}_${k}" ${w?`style="width:${w}px"`:''} inputmode="decimal"></td>`;
+  mats.forEach((name,m)=>{
+    body.insertAdjacentHTML('beforeend',`<tr><th>${name}</th>
+      ${cell(m,'s1')}${cell(m,'s2')}${cell(m,'s3')}<td id="sa${m}"></td>
+      ${cell(m,'t1')}${cell(m,'t2')}${cell(m,'t3')}<td id="ta${m}"></td>
+      ${cell(m,'dry')}${cell(m,'wet')}${cell(m,'note')}
+      <td><button class="pick" data-clear="${m}" style="margin:0;padding:8px 12px;font-size:13px">Тазала</button></td></tr>`);
+  });
+  const val=k=>parseFloat(String(d[k]||'').replace(',','.'));
+  const avg=(m,p)=>{const v=[1,2,3].map(i=>val(m+'_'+p+i)).filter(x=>!isNaN(x));return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'Дерек енгізілмеді'};
+  const calc=()=>mats.forEach((_,m)=>{view.querySelector('#sa'+m).textContent=avg(m,'s');view.querySelector('#ta'+m).textContent=avg(m,'t')});
+  const ins=[...view.querySelectorAll('input[data-k]')];
+  const store=()=>{try{localStorage.setItem('results',JSON.stringify(d))}catch(e){}};
+  ins.forEach(i=>{i.value=d[i.dataset.k]||'';i.oninput=()=>{d[i.dataset.k]=i.value}});
+  view.querySelectorAll('[data-clear]').forEach(b=>b.onclick=()=>{
+    ins.filter(i=>i.dataset.k.startsWith(b.dataset.clear+'_')).forEach(i=>{i.value='';delete d[i.dataset.k]});store();calc()});
+  const msg=view.querySelector('#rmsg');
+  view.querySelector('#rsave').onclick=()=>{store();msg.textContent='Сақталды.'};
+  view.querySelector('#rcalc').onclick=()=>{calc();msg.textContent=''};
+  calc();
+}
+/* 26-бет: 10 практикалық жұмыс. Тапсырмалардың мәтінін осы тізімде өзгертуге болады */
+const TASKS=["Зерттеу сұрағын жаз"];
+while(TASKS.length<10) TASKS.push("Тапсырма "+(TASKS.length+1)+" (мәтінін осында жазыңыз)");
+function initTasks(){
+  let d={}; try{d=JSON.parse(localStorage.getItem('tasks')||'{}')}catch(e){}
+  const tabs=view.querySelector('#tt'), tx=view.querySelector('#tq'), ta=view.querySelector('#ta'); let cur=0;
+  const show=i=>{cur=i;[...tabs.children].forEach((b,k)=>b.classList.toggle('on',k===i));
+    tx.textContent=(i+1)+'. '+TASKS[i]; ta.value=d[i]||''};
+  TASKS.forEach((_,i)=>{const b=document.createElement('button');b.className='tab';b.textContent=i+1;b.onclick=()=>show(i);tabs.appendChild(b)});
+  ta.oninput=()=>{d[cur]=ta.value;try{localStorage.setItem('tasks',JSON.stringify(d))}catch(e){}};
+  show(0);
+}
+/* 35-бет: қорғау тренажері ('defense' кілті) */
+function initDefense(){
+  const Q=["Тақырып","Неге таңдадым?","Не зерттедім?","Қалай сынадым?","Не өлшедім?","Нәтиже қандай?","Қандай қорытынды жасадым?"];
+  let d=[]; try{d=JSON.parse(localStorage.getItem('defense')||'[]')}catch(e){}
+  const box=view.querySelector('#dq'), msg=view.querySelector('#dmsg');
+  Q.forEach((q,i)=>{
+    box.insertAdjacentHTML('beforeend',`<label class="lb">${i+1}. ${q}</label><textarea class="dt" data-i="${i}"></textarea>`);
+  });
+  const tas=[...box.querySelectorAll('textarea')];
+  tas.forEach((t,i)=>{t.value=d[i]||'';t.oninput=()=>{d[i]=t.value;try{localStorage.setItem('defense',JSON.stringify(d))}catch(e){};msg.textContent=''}});
+  view.querySelector('#dready').onclick=()=>{
+    const empty=tas.findIndex(t=>!t.value.trim());
+    if(empty>=0){msg.textContent='Әлі толтырылмаған сұрақ: '+(empty+1)+'. '+Q[empty];tas[empty].focus()}
+    else msg.textContent='🎉 Тамаша! Қорғауға дайынсың.';
+  };
+}
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+go(0);
+</script>
+</body>
+</html>
